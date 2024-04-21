@@ -1,13 +1,18 @@
 package org.example;
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.io.*;
 import java.util.*;
 
 public class Main {
+    private static final String NOMBRE_ARCHIVO = "votaciones.txt";
     private static int contadorVotaciones = 1;
     private static Map<String, Votacion> votaciones = new HashMap<>();
 
 
     public static void main(String[] args) {
+        verificarVotaciones();
 
         Map<String, String> usuariosContraseñas = new HashMap<>();
         usuariosContraseñas.put("123456789", "contraseña1");
@@ -65,6 +70,24 @@ public class Main {
                 System.out.println("Opción inválida. Por favor, ingrese 1 o 2.");
         }
     }
+    private static void cargarVotacionesDesdeArchivo() {
+        try (BufferedReader br = new BufferedReader(new FileReader(NOMBRE_ARCHIVO))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                // Parsear la línea para obtener los detalles de la votación
+                String[] partes = linea.split(",");
+                String id = partes[0];
+                String pregunta = partes[1];
+                List<String> opciones = Arrays.asList(partes).subList(2, partes.length);
+
+                // Crear la votación y agregarla al mapa de votaciones
+                votaciones.put(id, new Votacion(pregunta, opciones));
+            }
+        } catch (IOException e) {
+            // Manejar errores de lectura del archivo
+            e.printStackTrace();
+        }
+    }
     public static void crearVotacion(Scanner scanner) {
         System.out.println("Creación de votación:");
 
@@ -97,10 +120,24 @@ public class Main {
         votaciones.put(idVotacion, nuevaVotacion);
 
         System.out.println("Votación creada con éxito. ID de votación: " + idVotacion);
-
+        guardarVotacionesEnArchivo();
         // Mostrar el menú nuevamente
         mostrarMenu();
     }
+    private static void guardarVotacionesEnArchivo() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(NOMBRE_ARCHIVO))) {
+            for (Map.Entry<String, Votacion> entry : votaciones.entrySet()) {
+                String id = entry.getKey();
+                Votacion votacion = entry.getValue();
+                String linea = id + "," + votacion.getPregunta() + "," + String.join(",", votacion.getOpciones());
+                pw.println(linea);
+            }
+        } catch (IOException e) {
+            // Manejar errores de escritura en el archivo
+            e.printStackTrace();
+        }
+    }
+
     public static void mostrarVotacionesDisponibles() {
         System.out.println("Votaciones disponibles:");
         for (String id : votaciones.keySet()) {
@@ -147,6 +184,16 @@ public class Main {
         }
         public List<String> getOpciones() {
             return opciones;
+        }
+    }
+    public static void verificarVotaciones() {
+        if (!Files.exists(Paths.get(NOMBRE_ARCHIVO))) {
+            try {
+                Files.createFile(Paths.get(NOMBRE_ARCHIVO));
+                System.out.println("Archivo de votaciones creado correctamente.");
+            } catch (IOException e) {
+                System.err.println("Error al crear el archivo de votaciones: " + e.getMessage());
+            }
         }
     }
 
