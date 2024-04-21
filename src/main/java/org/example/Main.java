@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Main {
     private static final String NOMBRE_ARCHIVO = "votaciones.txt";
+    private static final String NOMBRE_ARCHIVO_VOTOS = "votos.txt";
     private static int contadorVotaciones = 1;
     private static Map<String, Votacion> votaciones = new HashMap<>();
 
@@ -80,14 +81,16 @@ public class Main {
                 String pregunta = partes[1];
                 List<String> opciones = Arrays.asList(partes).subList(2, partes.length);
 
-                // Crear la votación y agregarla al mapa de votaciones
-                votaciones.put(id, new Votacion(pregunta, opciones));
+                // Agregar la votación al mapa de votaciones si no existe previamente
+                if (!votaciones.containsKey(id)) {
+                    votaciones.put(id, new Votacion(pregunta, opciones));
+                }
             }
         } catch (IOException e) {
             // Manejar errores de lectura del archivo
             e.printStackTrace();
         }
-    }
+    }// IMPLEMENTAR PARA LEER LAS VOTACIONES Y VOTAR
     public static void crearVotacion(Scanner scanner) {
         System.out.println("Creación de votación:");
 
@@ -166,12 +169,29 @@ public class Main {
                     System.out.println("Opción inválida. Por favor, ingrese un número válido.");
                 } else {
                     // Aquí puedes registrar el voto del usuario en la opción seleccionada
+                    registrarVoto(idVotacion, opcionVotada);
                     System.out.println("Voto registrado correctamente.");
                     break; // Salir del bucle una vez que se registra el voto correctamente
                 }
             }
         }
     }
+    private static void registrarVoto(String idVotacion, int opcionVotada) {
+        try {
+            // Verificar si el archivo de votos existe, y crearlo si no existe
+            if (!Files.exists(Paths.get(NOMBRE_ARCHIVO_VOTOS))) {
+                Files.createFile(Paths.get(NOMBRE_ARCHIVO_VOTOS));
+            }
+
+            // Escribir el voto en el archivo de votos
+            try (PrintWriter pw = new PrintWriter(new FileWriter(NOMBRE_ARCHIVO_VOTOS, true))) {
+                pw.println(idVotacion + "," + opcionVotada);
+            }
+        } catch (IOException e) {
+            System.err.println("Error al registrar el voto: " + e.getMessage());
+        }
+    }
+
     static class Votacion {
         private String pregunta;
         private List<String> opciones;
@@ -186,6 +206,7 @@ public class Main {
             return opciones;
         }
     }
+
     public static void verificarVotaciones() {
         if (!Files.exists(Paths.get(NOMBRE_ARCHIVO))) {
             try {
