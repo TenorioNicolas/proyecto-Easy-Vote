@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff21c83c-96b9-4566-80e3-f017a6af6ca5" name="Changes" comment="Se guardan las votaciones en txt, se reinicia cada vez que se ocupa el programa">
+    <list default="true" id="ff21c83c-96b9-4566-80e3-f017a6af6ca5" name="Changes" comment="Se crea votacion, de momento se guardara en la memoria">
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/MainTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -14,11 +16,16 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Angelo" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2fQ956x8E6jp4uUZnogsnwNTWEy" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -31,7 +38,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "TesteoTXT",
     "kotlin-language-version-configured": "true"
   }
 }]]></component>
@@ -84,23 +91,7 @@
       <option name="project" value="LOCAL" />
       <updated>1713731322578</updated>
     </task>
-    <task id="LOCAL-00006" summary="Se puede crear una votacion y votar, ambos se guardan en la memoria">
-      <option name="closed" value="true" />
-      <created>1713733798309</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1713733798309</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Se guardan las votaciones en txt, se reinicia cada vez que se ocupa el programa">
-      <option name="closed" value="true" />
-      <created>1713736140440</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1713736140440</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -109,8 +100,6 @@
     <MESSAGE value="se validaba al usuario1 con la contraseña2, corregido con hashmap(similar a un diccionario en python)" />
     <MESSAGE value="se valida al usuario y se le muestra un menu para elegir si votar o crear una votacion" />
     <MESSAGE value="Se crea votacion, de momento se guardara en la memoria" />
-    <MESSAGE value="Se puede crear una votacion y votar, ambos se guardan en la memoria" />
-    <MESSAGE value="Se guardan las votaciones en txt, se reinicia cada vez que se ocupa el programa" />
-    <option name="LAST_COMMIT_MESSAGE" value="Se guardan las votaciones en txt, se reinicia cada vez que se ocupa el programa" />
+    <option name="LAST_COMMIT_MESSAGE" value="Se crea votacion, de momento se guardara en la memoria" />
   </component>
 </project>
