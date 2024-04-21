@@ -3,6 +3,9 @@ package org.example;
 import java.util.*;
 
 public class Main {
+    private static int contadorVotaciones = 1;
+    private static Map<String, Votacion> votaciones = new HashMap<>();
+
 
     public static void main(String[] args) {
 
@@ -36,12 +39,10 @@ public class Main {
             }
         }
     }
-
     public static boolean validarUsuario(String usuario, String contraseña, Map<String, String> usuariosContraseñas) {
         String contraseñaAlmacenada = usuariosContraseñas.get(usuario);
         return contraseñaAlmacenada != null && contraseñaAlmacenada.equals(contraseña);
     }
-
     public static void mostrarMenu() {
         Scanner scanner = new Scanner(System.in);
 
@@ -57,7 +58,8 @@ public class Main {
                 break;
             case 2:
                 System.out.println("Ha elegido votar en una votación existente.");
-                // Aquí puedes llamar a un método para votar en una votación existente
+                mostrarVotacionesDisponibles();
+                votarEnVotacionExistente(scanner);
                 break;
             default:
                 System.out.println("Opción inválida. Por favor, ingrese 1 o 2.");
@@ -89,8 +91,64 @@ public class Main {
         }
 
         // Guardar votacion, de momento sin csv
-    }
+        // Crear la votación y agregarla al Map
+        Votacion nuevaVotacion = new Votacion(pregunta, opciones);
+        String idVotacion = "V" + contadorVotaciones++;
+        votaciones.put(idVotacion, nuevaVotacion);
 
+        System.out.println("Votación creada con éxito. ID de votación: " + idVotacion);
+
+        // Mostrar el menú nuevamente
+        mostrarMenu();
+    }
+    public static void mostrarVotacionesDisponibles() {
+        System.out.println("Votaciones disponibles:");
+        for (String id : votaciones.keySet()) {
+            Votacion votacion = votaciones.get(id);
+            System.out.println(id + ": " + votacion.getPregunta());
+        }
+    }
+    public static void votarEnVotacionExistente(Scanner scanner) {
+        while (true) {
+            System.out.print("Ingrese el ID de la votación en la que desea votar: ");
+            String idVotacion = scanner.nextLine();
+
+            Votacion votacion = votaciones.get(idVotacion);
+            if (votacion == null) {
+                System.out.println("No se encontró la votación con ese ID. Inténtelo nuevamente.");
+            } else {
+                System.out.println("Votación seleccionada: " + votacion.getPregunta());
+                System.out.println("Opciones:");
+                List<String> opciones = votacion.getOpciones();
+                for (int i = 0; i < opciones.size(); i++) {
+                    System.out.println((i + 1) + ". " + opciones.get(i));
+                }
+
+                int opcionVotada = leerEntero(scanner, "Ingrese el número de la opción que desea votar: ");
+                if (opcionVotada < 1 || opcionVotada > opciones.size()) {
+                    System.out.println("Opción inválida. Por favor, ingrese un número válido.");
+                } else {
+                    // Aquí puedes registrar el voto del usuario en la opción seleccionada
+                    System.out.println("Voto registrado correctamente.");
+                    break; // Salir del bucle una vez que se registra el voto correctamente
+                }
+            }
+        }
+    }
+    static class Votacion {
+        private String pregunta;
+        private List<String> opciones;
+        public Votacion(String pregunta, List<String> opciones) {
+            this.pregunta = pregunta;
+            this.opciones = opciones;
+        }
+        public String getPregunta() {
+            return pregunta;
+        }
+        public List<String> getOpciones() {
+            return opciones;
+        }
+    }
 
     public static int leerEntero(Scanner scanner, String mensaje) {
         int numero = 0;
