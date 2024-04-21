@@ -1,36 +1,40 @@
 package org.example;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        String[] usuarios = {"123456789", "987654321"};
-        String[] contrasenas = {"contraseña1", "contraseña2"};
+        Map<String, String> usuariosContraseñas = new HashMap<>();
+        usuariosContraseñas.put("123456789", "contraseña1");
+        usuariosContraseñas.put("987654321", "contraseña2");
 
-        ingresarUsuario(usuarios, contrasenas);
+        ingresarUsuario(usuariosContraseñas);
 
     }
-    public static void ingresarUsuario(String[] usuarios, String[] contrasenas) {
+    public static void ingresarUsuario(Map<String, String> usuariosContraseñas) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Ingrese el usuario: ");
-        String usuario = scanner.nextLine();
-        System.out.print("Ingrese la contraseña: ");
-        String contrasena = scanner.nextLine();
+        boolean usuarioValido = false;
 
-        if (validarUsuario(usuario, contrasena, usuarios, contrasenas)) {
-            System.out.println("Usuario y contraseña válidos. Bienvenido.");
-        } else {
-            System.out.println("Usuario o contraseña incorrectos.");
-        }
-    }
-    public static boolean validarUsuario(String usuario, String contrasena, String[] usuarios, String[] contrasenas) {
-        for (int i = 0; i < usuarios.length; i++) {
-            if (usuarios[i].equals(usuario) && contrasenas[i].equals(contrasena)) {
-                return true;
+        while (!usuarioValido) {
+            System.out.print("Ingrese el usuario: ");
+            String usuario = scanner.nextLine();
+            System.out.print("Ingrese la contraseña: ");
+            String contraseña = scanner.nextLine();
+
+            if (validarUsuario(usuario, contraseña, usuariosContraseñas)) {
+                System.out.println("Usuario y contraseña válidos. Bienvenido.");
+                usuarioValido = true;
+            } else {
+                System.out.println("Usuario o contraseña incorrectos. Inténtelo nuevamente.");
             }
         }
-        return false;
+    }
+    public static boolean validarUsuario(String usuario, String contraseña, Map<String, String> usuariosContraseñas) {
+        String contraseñaAlmacenada = usuariosContraseñas.get(usuario);
+        return contraseñaAlmacenada != null && contraseñaAlmacenada.equals(contraseña);
     }
 }
 
