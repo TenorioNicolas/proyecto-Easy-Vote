@@ -1,9 +1,6 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -56,7 +53,7 @@ public class Main {
         switch (opcion) {
             case 1:
                 System.out.println("Ha elegido crear una votación.");
-                // Aquí puedes llamar a un método para crear una votación
+                crearVotacion(scanner);
                 break;
             case 2:
                 System.out.println("Ha elegido votar en una votación existente.");
@@ -66,6 +63,34 @@ public class Main {
                 System.out.println("Opción inválida. Por favor, ingrese 1 o 2.");
         }
     }
+    public static void crearVotacion(Scanner scanner) {
+        System.out.println("Creación de votación:");
+
+        // Leer la pregunta de la votación
+        System.out.print("Ingrese la pregunta de la votación: ");
+        String pregunta = scanner.nextLine();
+
+        // Leer el número de opciones
+        int numOpciones = leerEntero(scanner, "Ingrese el número de opciones: ");
+
+        // Leer las opciones
+        List<String> opciones = new ArrayList<>();
+        for (int i = 0; i < numOpciones; i++) {
+            System.out.print("Ingrese la opción " + (i + 1) + ": ");
+            opciones.add(scanner.nextLine());
+        }
+
+        // Mostrar resumen de la votación
+        System.out.println("Resumen de la votación:");
+        System.out.println("Pregunta: " + pregunta);
+        System.out.println("Opciones:");
+        for (int i = 0; i < opciones.size(); i++) {
+            System.out.println((i + 1) + ". " + opciones.get(i));
+        }
+
+        // Guardar votacion, de momento sin csv
+    }
+
 
     public static int leerEntero(Scanner scanner, String mensaje) {
         int numero = 0;
@@ -80,9 +105,11 @@ public class Main {
                 System.out.println("Error: Debes ingresar un número entero.");
                 scanner.next(); // Limpiar el búfer del scanner para evitar un bucle infinito
             }
+            scanner.nextLine(); // Consumir la nueva línea en blanco, para que no consuma dos scanner
         }
         return numero;
     }
+
 }
 
 

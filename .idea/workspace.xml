@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff21c83c-96b9-4566-80e3-f017a6af6ca5" name="Changes" comment="se validaba al usuario1 con la contraseña2, corregido con hashmap(similar a un diccionario en python)">
+    <list default="true" id="ff21c83c-96b9-4566-80e3-f017a6af6ca5" name="Changes" comment="se valida al usuario y se le muestra un menu para elegir si votar o crear una votacion">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
     </list>
@@ -68,13 +68,22 @@
       <option name="project" value="LOCAL" />
       <updated>1713724584861</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="se valida al usuario y se le muestra un menu para elegir si votar o crear una votacion">
+      <option name="closed" value="true" />
+      <created>1713726010219</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1713726010219</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Simple commit" />
     <MESSAGE value="Ingreso de usuarios" />
     <MESSAGE value="se validaba al usuario1 con la contraseña2, corregido con hashmap(similar a un diccionario en python)" />
-    <option name="LAST_COMMIT_MESSAGE" value="se validaba al usuario1 con la contraseña2, corregido con hashmap(similar a un diccionario en python)" />
+    <MESSAGE value="se valida al usuario y se le muestra un menu para elegir si votar o crear una votacion" />
+    <option name="LAST_COMMIT_MESSAGE" value="se valida al usuario y se le muestra un menu para elegir si votar o crear una votacion" />
   </component>
 </project>
