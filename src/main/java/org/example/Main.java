@@ -4,21 +4,26 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    // Variables estáticas para mantener el conteo de votaciones y almacenar los datos de votaciones y usuarios.
     private static int contadorVotaciones = 1;
     private static Map<String, Votacion> votaciones = new HashMap<>();
     private static Map<String, Usuario> usuarios = new HashMap<>();
+    private static final String NOMBRE_ARCHIVO_VOTACIONES = "votaciones.csv";
+    private static final String NOMBRE_ARCHIVO_VOTOS = "votos.csv";
 
     public static void main(String[] args) {
+        // Carga inicial de datos de votaciones y usuarios.
         cargarVotacionesDesdeArchivo();
-        usuarios = leerUsuariosDesdeCSV("matriculas.csv");
+        usuarios = leerUsuariosDesdeCSV("matriculas.csv"); // Este debería devolver un Map<String, Usuario>
         Scanner scanner = new Scanner(System.in);
 
+        // Autenticación del usuario.
         System.out.print("Ingrese su matrícula: ");
         String matricula = scanner.nextLine();
         System.out.print("Ingrese su contraseña: ");
         String contraseña = scanner.nextLine();
 
-        Usuario usuarioValidado = validarUsuario(matricula, contraseña);
+        Usuario usuarioValidado = validarUsuario(matricula, contraseña, usuarios);
 
         if (usuarioValidado != null) {
             System.out.println("Usuario y contraseña válidos. Bienvenido, " + usuarioValidado.getNombre() + "!");
@@ -29,7 +34,8 @@ public class Main {
         scanner.close();
     }
 
-    public static Usuario validarUsuario(String matricula, String contraseña) {
+    // Valida que el usuario exista y que la contraseña coincida.
+    public static Usuario validarUsuario(String matricula, String contraseña, Map<String, Usuario> usuarios) {
         Usuario usuario = usuarios.get(matricula);
         if (usuario != null && usuario.getContraseña().equals(contraseña)) {
             return usuario;
@@ -37,24 +43,25 @@ public class Main {
         return null;
     }
 
+
+    // Muestra el menú de opciones basado en el rol del usuario.
+// Muestra el menú de opciones basado en el rol del usuario.
     public static void mostrarMenu(Usuario usuario) {
         Scanner scanner = new Scanner(System.in);
+        boolean salir = false;
 
-        System.out.println("Seleccione una opción:");
-        if (usuario.getRol().equals("Creador") || usuario.getRol().equals("Creador y Votante")) {
-            System.out.println("1. Crear una votación");
-        }
-        if (usuario.getRol().equals("Votante") || usuario.getRol().equals("Creador y Votante")) {
-            if (votaciones.isEmpty()) {
-                System.out.println("No hay votaciones disponibles por el momento.");
-                return; // Aquí termina la ejecución si no hay votaciones disponibles.
+        while (!salir) {
+            System.out.println("Seleccione una opción:");
+            if (usuario.getRol().equals("Creador") || usuario.getRol().equals("Creador y Votante")) {
+                System.out.println("1. Crear una votación");
             }
-            System.out.println("2. Votar en una votación existente");
-        }
+            if (usuario.getRol().equals("Votante") || usuario.getRol().equals("Creador y Votante")) {
+                System.out.println("2. Votar en una votación existente");
+            }
+            System.out.println("3. Salir");
 
-        int opcion = leerEntero(scanner, "Ingrese el número de la opción deseada: ");
+            int opcion = leerEntero(scanner, "Ingrese el número de la opción deseada: ");
 
-        try {
             switch (opcion) {
                 case 1:
                     if (usuario.getRol().contains("Creador")) {
@@ -66,71 +73,67 @@ public class Main {
                     break;
                 case 2:
                     if (usuario.getRol().contains("Votante")) {
-                        System.out.println("Ha elegido votar en una votación existente.");
-                        mostrarVotacionesDisponibles();
-                        votarEnVotacionExistente(scanner);
+                        if (votaciones.isEmpty()) {
+                            System.out.println("No hay votaciones disponibles en este momento.");
+                            salir = true; // El usuario no puede hacer nada más si no hay votaciones.
+                        } else {
+                            System.out.println("Ha elegido votar en una votación existente.");
+                            votarEnVotacionExistente(scanner, usuario); // Pasamos el usuario validado como argumento.
+                        }
                     } else {
                         System.out.println("No tiene permiso para votar.");
                     }
                     break;
+                case 3:
+                    salir = true;
+                    System.out.println("Gracias por usar el sistema de votaciones.");
+                    break;
                 default:
-                    System.out.println("Opción inválida. Por favor, ingrese una opción correcta.");
-                    mostrarMenu(usuario);
+                    System.out.println("Opción inválida. Por favor, intente de nuevo.");
+                    break;
             }
-        } catch (Exception e) {
-            System.out.println("Ocurrió un error: " + e.getMessage());
-        } finally {
-            scanner.close();
         }
+        scanner.close();
     }
 
+    // Método para crear una nueva votación.
     public static void crearVotacion(Scanner scanner) {
         System.out.println("Creación de votación:");
-
-        // Leer la pregunta de la votación
         System.out.print("Ingrese la pregunta de la votación: ");
         String pregunta = scanner.nextLine();
-
-        // Leer el número de opciones
         int numOpciones = leerEntero(scanner, "Ingrese el número de opciones: ");
-
-        // Leer las opciones
         List<String> opciones = new ArrayList<>();
         for (int i = 0; i < numOpciones; i++) {
             System.out.print("Ingrese la opción " + (i + 1) + ": ");
             opciones.add(scanner.nextLine());
         }
-
-        // Mostrar resumen de la votación
         System.out.println("Resumen de la votación:");
         System.out.println("Pregunta: " + pregunta);
         System.out.println("Opciones:");
         for (int i = 0; i < opciones.size(); i++) {
             System.out.println((i + 1) + ". " + opciones.get(i));
         }
-
-        // Crear la votación y agregarla al Map
         Votacion nuevaVotacion = new Votacion(pregunta, opciones);
         String idVotacion = "V" + contadorVotaciones++;
         votaciones.put(idVotacion, nuevaVotacion);
-
         System.out.println("Votación creada con éxito. ID de votación: " + idVotacion);
         guardarVotacionesEnArchivo();
     }
 
+    // Muestra las votaciones disponibles.
     public static void mostrarVotacionesDisponibles() {
         if (votaciones.isEmpty()) {
             System.out.println("No hay votaciones disponibles en este momento.");
             return;
         }
-
         System.out.println("Votaciones disponibles:");
         for (Map.Entry<String, Votacion> entry : votaciones.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue().getPregunta());
         }
     }
 
-    public static void votarEnVotacionExistente(Scanner scanner) {
+    // Permite a un usuario votar en una votación existente.
+    public static void votarEnVotacionExistente(Scanner scanner, Usuario usuario) {
         System.out.print("Ingrese el ID de la votación en la que desea votar: ");
         String idVotacion = scanner.nextLine();
 
@@ -151,9 +154,12 @@ public class Main {
             System.out.println("Opción inválida. Por favor, ingrese un número válido.");
         } else {
             System.out.println("Voto registrado correctamente para la opción: " + opciones.get(opcionVotada - 1));
+            guardarVotoEnArchivo(usuario.getMatricula(), idVotacion, opcionVotada);
         }
     }
 
+
+    // Método utilitario para leer un número entero desde la consola.
     public static int leerEntero(Scanner scanner, String mensaje) {
         while (true) {
             System.out.print(mensaje);
@@ -165,16 +171,14 @@ public class Main {
         }
     }
 
+    // Carga los usuarios desde un archivo CSV.
     public static Map<String, Usuario> leerUsuariosDesdeCSV(String nombreArchivo) {
         Map<String, Usuario> usuarios = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
             String linea;
-            // Saltar la línea del encabezado
-            br.readLine();
-
             while ((linea = br.readLine()) != null) {
                 String[] datos = linea.split(",");
-                if (datos.length >= 5) {  // Asegúrate de que hay al menos 5 elementos
+                if (datos.length >= 5) {
                     Usuario usuario = new Usuario(
                             datos[0], // matricula
                             datos[1], // contraseña
@@ -184,7 +188,6 @@ public class Main {
                     );
                     usuarios.put(datos[0], usuario);
                 } else {
-                    // Manejar el caso de que no haya suficientes datos en la línea
                     System.err.println("Línea incompleta o mal formada: " + linea);
                 }
             }
@@ -194,8 +197,7 @@ public class Main {
         return usuarios;
     }
 
-    private static final String NOMBRE_ARCHIVO_VOTACIONES = "votaciones.csv";
-
+    // Guarda las votaciones actuales en un archivo.
     public static void guardarVotacionesEnArchivo() {
         try (PrintWriter pw = new PrintWriter(new File(NOMBRE_ARCHIVO_VOTACIONES))) {
             for (Map.Entry<String, Votacion> votacionEntry : votaciones.entrySet()) {
@@ -207,6 +209,7 @@ public class Main {
         }
     }
 
+    // Carga las votaciones desde un archivo.
     public static void cargarVotacionesDesdeArchivo() {
         try (BufferedReader br = new BufferedReader(new FileReader(NOMBRE_ARCHIVO_VOTACIONES))) {
             String linea;
@@ -225,13 +228,20 @@ public class Main {
         }
     }
 
+    public static void guardarVotoEnArchivo(String matricula, String idVotacion, int opcionVotada) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(NOMBRE_ARCHIVO_VOTOS, true))) {
+            pw.println(matricula + "," + idVotacion + "," + opcionVotada);
+        } catch (IOException e) {
+            System.err.println("No se pudo guardar el voto: " + e.getMessage());
+        }
+    }
 
     static class Usuario {
         private String matricula;
         private String contraseña;
         private String nombre;
         private String apellido;
-        private String rol; // "Votante", "Creador" o "Creador y Votante"
+        private String rol; // Puede ser "Votante", "Creador" o "Creador y Votante"
 
         public Usuario(String matricula, String contraseña, String nombre, String apellido, String rol) {
             this.matricula = matricula;
