@@ -35,10 +35,10 @@ public class Menu {
         boolean sesionActiva = true;
         while (sesionActiva) {
             System.out.println("Seleccione una opción:");
-            if (usuario.getRol().equals("Creador") || usuario.getRol().equals("Creador y Votante")) {
+            if (usuario.getRol().equals("Creador") || usuario.getRol().equals("Votante y Creador")) {
                 System.out.println("1. Crear una votación");
             }
-            if (usuario.getRol().equals("Votante") || usuario.getRol().equals("Creador y Votante")) {
+            if (usuario.getRol().equals("Votante") || usuario.getRol().equals("Votante y Creador")) {
                 System.out.println("2. Votar en una votación existente");
             }
             System.out.println("3. Salir");

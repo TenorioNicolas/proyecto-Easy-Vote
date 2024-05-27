@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff21c83c-96b9-4566-80e3-f017a6af6ca5" name="Changes" comment="Se crea votacion, de momento se guardara en la memoria">
+    <list default="true" id="ff21c83c-96b9-4566-80e3-f017a6af6ca5" name="Changes" comment="Se guardan las votaciones en un txt, tambien se guardan los votos(de momento solo deja un voto al usuario que registro los votos)">
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_04_2024_19_13__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_21_04_2024_19_13__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/matriculas.csv" beforeDir="false" afterPath="$PROJECT_DIR$/matriculas.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/MainTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/MainTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dominio/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dominio/Menu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/votaciones.csv" beforeDir="false" afterPath="$PROJECT_DIR$/votaciones.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/votaciones.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/votos.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/votaciones.txt" beforeDir="false" afterPath="$PROJECT_DIR$/votaciones.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/votos.txt" beforeDir="false" afterPath="$PROJECT_DIR$/votos.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Angelo" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,12 +37,15 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
-    "JUnit.MainTest.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "TesteoCSV",
-    "kotlin-language-version-configured": "true"
+    "git-widget-placeholder": "csv-Angelo",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -105,6 +106,17 @@
     </task>
     <option name="localTasksCounter" value="6" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Simple commit" />
