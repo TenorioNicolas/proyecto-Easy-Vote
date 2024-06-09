@@ -1,8 +1,10 @@
 package datos;
 
+
 import dominio.Votacion;
 import java.io.*;
 import java.util.*;
+
 
 public class ControladorVotaciones {
     private Map<String, Votacion> votaciones = new HashMap<>();
@@ -11,10 +13,13 @@ public class ControladorVotaciones {
     private int contadorVotaciones = 1;
     private Scanner scanner;
 
+
     public ControladorVotaciones() {
         cargarVotacionesDesdeArchivo();
         this.scanner = new Scanner(System.in);
     }
+
+
 
 
     public void mostrarVotacionesDisponibles() {
@@ -27,6 +32,7 @@ public class ControladorVotaciones {
             System.out.println(entry.getKey() + ": " + entry.getValue().getPregunta() + " con opciones: " + entry.getValue().getOpciones());
         }
     }
+
 
     public void votarEnVotacionExistente(Scanner scanner) {
         System.out.println("Ingrese el ID de la votación en la que desea votar:");
@@ -53,16 +59,27 @@ public class ControladorVotaciones {
         return votaciones.get(idVotacion);
     }
 
+
     public void crearVotacion(Scanner scanner) {
         System.out.println("Ingrese la pregunta de la votación:");
-        String pregunta = scanner.nextLine();
-        System.out.println("Cuántas opciones tendrá la votación?");
+        String pregunta = scanner.nextLine().trim();  // Utilizamos trim() para eliminar espacios en blanco al inicio y al final
+        while (pregunta.isEmpty()) {
+            System.out.println("La pregunta no puede estar vacía. Por favor, ingrese una pregunta válida:");
+            pregunta = scanner.nextLine().trim();
+        }
 
+
+        System.out.println("Cuántas opciones tendrá la votación?");
         int cantidadOpciones = leerNumeroEntero(scanner);
         List<String> opciones = new ArrayList<>();
         for (int i = 1; i <= cantidadOpciones; i++) {
             System.out.println("Ingrese la opción " + i + ":");
-            opciones.add(scanner.nextLine());
+            String opcion = scanner.nextLine().trim();
+            while (opcion.isEmpty()) {
+                System.out.println("La opción no puede estar vacía. Por favor, ingrese una opción válida:");
+                opcion = scanner.nextLine().trim();
+            }
+            opciones.add(opcion);
         }
         Votacion nuevaVotacion = new Votacion(pregunta, opciones);
         String idVotacion = "V" + contadorVotaciones++; // Asegurar que el contador se incremente después de asignar el ID
@@ -70,6 +87,8 @@ public class ControladorVotaciones {
         System.out.println("Votación creada con éxito. ID de votación: " + idVotacion);
         guardarVotacionesEnArchivo();
     }
+
+
 
 
     // Método auxiliar para leer un número entero de forma segura
@@ -84,6 +103,8 @@ public class ControladorVotaciones {
     }
 
 
+
+
     private void guardarVotacionesEnArchivo() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(VOTACIONES_FILE_PATH))) {
             for (Map.Entry<String, Votacion> entry : votaciones.entrySet()) {
@@ -94,6 +115,7 @@ public class ControladorVotaciones {
             System.err.println("No se pudo guardar las votaciones: " + e.getMessage());
         }
     }
+
 
     private void cargarVotacionesDesdeArchivo() {
         File file = new File(VOTACIONES_FILE_PATH);
@@ -117,6 +139,7 @@ public class ControladorVotaciones {
             System.err.println("Error al leer el archivo de votaciones: " + e.getMessage());
         }
     }
+
 
     // Método para registrar un voto en el archivo de votos
     public void registrarVoto(String idVotacion, String matriculaUsuario, String opcionSeleccionada) {
