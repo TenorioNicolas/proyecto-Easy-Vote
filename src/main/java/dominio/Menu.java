@@ -2,7 +2,9 @@ package dominio;
 
 import datos.GestorUsuarios;
 import datos.ControladorVotaciones;
+import java.util.List;
 import java.util.Scanner;
+
 
 public class Menu {
     private GestorUsuarios gestorUsuarios;
@@ -35,31 +37,23 @@ public class Menu {
         boolean sesionActiva = true;
         while (sesionActiva) {
             System.out.println("Seleccione una opción:");
-            if (usuario.getRol().equals("Creador") || usuario.getRol().equals("Creador y Votante")) {
-                System.out.println("1. Crear una votación");
-            }
-            if (usuario.getRol().equals("Votante") || usuario.getRol().equals("Creador y Votante")) {
-                System.out.println("2. Votar en una votación existente");
-            }
+            System.out.println("1. Crear una votación");
+            System.out.println("2. Votar en una votación existente");
             System.out.println("3. Salir");
 
             int opcion = leerEntero("Ingrese el número de la opción deseada: ");
 
             switch (opcion) {
                 case 1:
-                    if (usuario.getRol().contains("Creador")) {
+                    if (usuario.getRol().equals("Creador")) {
                         controladorVotaciones.crearVotacion(scanner);
                     } else {
                         System.out.println("No tiene permiso para crear votaciones.");
                     }
                     break;
                 case 2:
-                    if (usuario.getRol().contains("Votante")) {
-                        controladorVotaciones.mostrarVotacionesDisponibles();
-                        controladorVotaciones.votarEnVotacionExistente(scanner);
-                    } else {
-                        System.out.println("No tiene permiso para votar.");
-                    }
+                    controladorVotaciones.mostrarVotacionesDisponibles();
+                    votarEnVotacionExistente(usuario);
                     break;
                 case 3:
                     sesionActiva = false;
@@ -71,8 +65,36 @@ public class Menu {
         }
     }
 
+    private void votarEnVotacionExistente(Usuario usuario) {
+        System.out.println("Ingrese el ID de la votación en la que desea votar:");
+        String idVotacion = scanner.nextLine();
 
+        if (controladorVotaciones.usuarioHaVotado(idVotacion, usuario.getMatricula())) {
+            System.out.println("Ya has votado en esta votación.");
+            return;
+        }
 
+        Votacion votacion = controladorVotaciones.obtenerVotacionPorID(idVotacion);
+        if (votacion == null) {
+            System.out.println("No se encontró ninguna votación con el ID especificado.");
+            return;
+        }
+
+        System.out.println("Votación: " + votacion.getPregunta());
+        List<String> opciones = votacion.getOpciones();
+        for (int i = 0; i < opciones.size(); i++) {
+            System.out.println((i + 1) + ". " + opciones.get(i));
+        }
+
+        System.out.println("Seleccione el número de la opción por la que desea votar:");
+        int eleccion = leerEntero("Ingrese el número de la opción deseada: ") - 1;
+        if (eleccion < 0 || eleccion >= opciones.size()) {
+            System.out.println("Selección inválida.");
+        } else {
+            controladorVotaciones.registrarVoto(idVotacion, usuario.getMatricula(), opciones.get(eleccion));
+            System.out.println("Has votado por: " + opciones.get(eleccion));
+        }
+    }
 
     private int leerEntero(String mensaje) {
         while (true) {
