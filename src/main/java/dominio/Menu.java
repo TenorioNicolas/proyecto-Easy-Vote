@@ -3,6 +3,7 @@ package dominio;
 import datos.GestorUsuarios;
 import datos.ControladorVotaciones;
 import java.util.Scanner;
+import java.util.List;
 
 public class Menu {
     private GestorUsuarios gestorUsuarios;
@@ -56,7 +57,7 @@ public class Menu {
                 case 2:
                     if (usuario.getRol().contains("Votante")) {
                         controladorVotaciones.mostrarVotacionesDisponibles();
-                        controladorVotaciones.votarEnVotacionExistente(scanner);
+                        votarEnVotacionExistente(usuario);
                     } else {
                         System.out.println("No tiene permiso para votar.");
                     }
@@ -71,8 +72,41 @@ public class Menu {
         }
     }
 
+    private void votarEnVotacionExistente(Usuario usuario) {
+        System.out.println("Ingrese el ID de la votación en la que desea votar:");
+        String idVotacion = scanner.nextLine();
 
+        // Verificar si el usuario ya ha votado en esta votación
+        if (controladorVotaciones.usuarioHaVotado(idVotacion, usuario.getMatricula())) {
+            System.out.println("Ya has votado en esta votación.");
+            return;
+        }
 
+        // Obtener la votación correspondiente al ID proporcionado
+        Votacion votacion = controladorVotaciones.obtenerVotacionPorID(idVotacion);
+        if (votacion == null) {
+            System.out.println("No se encontró ninguna votación con el ID especificado.");
+            return;
+        }
+
+        // Mostrar opciones de votación
+        System.out.println("Votación: " + votacion.getPregunta());
+        List<String> opciones = votacion.getOpciones();
+        for (int i = 0; i < opciones.size(); i++) {
+            System.out.println((i + 1) + ". " + opciones.get(i));
+        }
+
+        // Solicitar al usuario que seleccione una opción
+        System.out.println("Seleccione el número de la opción por la que desea votar:");
+        int eleccion = leerEntero("Ingrese el número de la opción deseada: ") - 1;
+        if (eleccion < 0 || eleccion >= opciones.size()) {
+            System.out.println("Selección inválida.");
+        } else {
+            // Registrar el voto del usuario
+            controladorVotaciones.registrarVoto(idVotacion, usuario.getMatricula(), opciones.get(eleccion));
+            System.out.println("Has votado por: " + opciones.get(eleccion));
+        }
+    }
 
     private int leerEntero(String mensaje) {
         while (true) {

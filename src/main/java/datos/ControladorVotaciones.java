@@ -4,15 +4,18 @@ import dominio.Votacion;
 import java.io.*;
 import java.util.*;
 
-
 public class ControladorVotaciones {
     private Map<String, Votacion> votaciones = new HashMap<>();
+    private final String VOTACIONES_FILE_PATH = "votaciones.csv";
+    private final String VOTOS_FILE_PATH = "votos.csv";
     private int contadorVotaciones = 1;
-    private final String FILE_PATH = "votaciones.csv";
+    private Scanner scanner;
 
     public ControladorVotaciones() {
         cargarVotacionesDesdeArchivo();
+        this.scanner = new Scanner(System.in);
     }
+
 
     public void mostrarVotacionesDisponibles() {
         if (votaciones.isEmpty()) {
@@ -46,6 +49,9 @@ public class ControladorVotaciones {
             System.out.println("Ha votado por: " + opciones.get(eleccion));
         }
     }
+    public Votacion obtenerVotacionPorID(String idVotacion) {
+        return votaciones.get(idVotacion);
+    }
 
     public void crearVotacion(Scanner scanner) {
         System.out.println("Ingrese la pregunta de la votación:");
@@ -65,7 +71,7 @@ public class ControladorVotaciones {
     }
 
     private void guardarVotacionesEnArchivo() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(VOTACIONES_FILE_PATH))) {
             for (Map.Entry<String, Votacion> entry : votaciones.entrySet()) {
                 Votacion votacion = entry.getValue();
                 pw.println(entry.getKey() + "," + votacion.getPregunta() + "," + String.join(",", votacion.getOpciones()));
@@ -76,7 +82,7 @@ public class ControladorVotaciones {
     }
 
     private void cargarVotacionesDesdeArchivo() {
-        File file = new File(FILE_PATH);
+        File file = new File(VOTACIONES_FILE_PATH);
         if (!file.exists()) {
             System.out.println("Archivo de votaciones no encontrado.");
             return;
@@ -95,5 +101,32 @@ public class ControladorVotaciones {
         } catch (IOException e) {
             System.err.println("Error al leer el archivo de votaciones: " + e.getMessage());
         }
+    }
+    // Método para registrar un voto en el archivo de votos
+    public void registrarVoto(String idVotacion, String matriculaUsuario, String opcionSeleccionada) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(VOTOS_FILE_PATH, true))) {
+            pw.println(idVotacion + "," + matriculaUsuario + "," + opcionSeleccionada);
+        } catch (IOException e) {
+            System.err.println("No se pudo guardar el voto: " + e.getMessage());
+        }
+    }
+    // Método para verificar si un usuario ya ha votado en una votación
+    public boolean usuarioHaVotado(String idVotacion, String matriculaUsuario) {
+        File file = new File(VOTOS_FILE_PATH);
+        if (!file.exists()) {
+            return false;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 3 && partes[0].equals(idVotacion) && partes[1].equals(matriculaUsuario)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo de votos: " + e.getMessage());
+        }
+        return false;
     }
 }
