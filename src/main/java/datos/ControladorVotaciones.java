@@ -21,16 +21,16 @@ public class ControladorVotaciones {
 
 
 
-
-    public void mostrarVotacionesDisponibles() {
+    public boolean mostrarVotacionesDisponibles() {
         if (votaciones.isEmpty()) {
             System.out.println("No hay votaciones disponibles en este momento.");
-            return;
+            return false;
         }
         System.out.println("Votaciones disponibles:");
         for (Map.Entry<String, Votacion> entry : votaciones.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue().getPregunta() + " con opciones: " + entry.getValue().getOpciones());
         }
+        return true;
     }
 
 

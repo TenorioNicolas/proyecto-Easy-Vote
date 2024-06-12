@@ -1,3 +1,4 @@
+
 package dominio;
 
 import java.util.List;
@@ -19,3 +20,4 @@ public class Votacion {
         return opciones;
     }
 }
+
