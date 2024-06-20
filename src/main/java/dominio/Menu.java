@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 
 
-
 public class Menu {
     private GestorUsuarios gestorUsuarios;
     private ControladorVotaciones controladorVotaciones;
@@ -47,7 +46,8 @@ public class Menu {
             System.out.println("Seleccione una opción:");
             System.out.println("1. Crear una votación");
             System.out.println("2. Votar en una votación existente");
-            System.out.println("3. Salir");
+            System.out.println("3. Desactivar una votación");
+            System.out.println("4. Salir");
 
             int opcion = leerEntero("Ingrese el número de la opción deseada: ");
 
@@ -60,7 +60,6 @@ public class Menu {
                     }
                     break;
                 case 2:
-                    // Aquí llamas a mostrarVotacionesDisponibles y decides si proceder
                     if (controladorVotaciones.mostrarVotacionesDisponibles()) {
                         votarEnVotacionExistente(usuario);
                     } else {
@@ -68,6 +67,13 @@ public class Menu {
                     }
                     break;
                 case 3:
+                    if (usuario.getRol().equals("Creador")) {
+                        desactivarVotacion(usuario);
+                    } else {
+                        System.out.println("No tiene permisos para desactivar una votación.");
+                    }
+                    break;
+                case 4:
                     sesionActiva = false;
                     System.out.println("Saliendo...");
                     break;
@@ -82,9 +88,17 @@ public class Menu {
         System.out.println("Ingrese el ID de la votación en la que desea votar:");
         String idVotacion = scanner.nextLine();
 
+        // Primero verificamos si el usuario ya ha votado en esta votación.
         if (!controladorVotaciones.usuarioHaVotado(idVotacion, usuario.getMatricula())) {
             Votacion votacion = controladorVotaciones.obtenerVotacionPorID(idVotacion);
+
+            // Verificar si la votación existe y está activa antes de permitir votar.
             if (votacion != null) {
+                if (!votacion.isActiva()) {
+                    System.out.println("Votación ya vencida.");
+                    return;
+                }
+
                 List<String> opciones = votacion.getOpciones();
                 boolean confirmado = false;
                 while (!confirmado) {
@@ -119,10 +133,6 @@ public class Menu {
         }
     }
 
-
-
-
-
     private int leerEntero(String mensaje) {
         while (true) {
             System.out.print(mensaje);
@@ -133,4 +143,27 @@ public class Menu {
             }
         }
     }
+
+    private void desactivarVotacion(Usuario usuario) {
+        // Primero mostramos todas las votaciones disponibles
+        if (!controladorVotaciones.mostrarVotacionesDisponibles()) {
+            System.out.println("No hay votaciones disponibles para desactivar.");
+            return;
+        }
+
+        System.out.println("Ingrese el ID de la votación que desea desactivar:");
+        String idVotacion = scanner.nextLine();
+        Votacion votacion = controladorVotaciones.obtenerVotacionPorID(idVotacion);
+        if (votacion != null) {
+            if (!votacion.isActiva()) {
+                System.out.println("Esta votación ya está inactiva.");
+                return;
+            }
+            controladorVotaciones.cambiarEstadoVotacion(idVotacion, false);
+            System.out.println("La votación ha sido desactivada exitosamente.");
+        } else {
+            System.out.println("No se encontró ninguna votación con el ID especificado.");
+        }
+    }
+
 }
