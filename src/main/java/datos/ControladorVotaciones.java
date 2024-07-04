@@ -19,6 +19,10 @@ public class ControladorVotaciones {
         this.scanner = new Scanner(System.in);
     }
 
+    public List<Votacion> getVotaciones() {
+        return new ArrayList<>(votaciones.values());
+    }
+
     public boolean mostrarVotacionesDisponibles() {
         if (votaciones.isEmpty()) {
             System.out.println("No hay votaciones disponibles en este momento.");
@@ -63,6 +67,13 @@ public class ControladorVotaciones {
     }
 
     public void crearVotacion(Scanner scanner) {
+        System.out.println("Ingrese el nombre de la votación:");
+        String nombre = scanner.nextLine().trim();
+        while (nombre.isEmpty()) {
+            System.out.println("El nombre de la votación no puede estar vacío. Por favor, ingrese un nombre válido:");
+            nombre = scanner.nextLine().trim();
+        }
+
         System.out.println("Ingrese la pregunta de la votación:");
         String pregunta = scanner.nextLine().trim();
         while (pregunta.isEmpty()) {
@@ -84,8 +95,8 @@ public class ControladorVotaciones {
         }
 
         // Asumimos que las nuevas votaciones son creadas activas
-        Votacion nuevaVotacion = new Votacion(pregunta, opciones, true);
         String idVotacion = "V" + contadorVotaciones++; // Formato V1, V2, V3, ...
+        Votacion nuevaVotacion = new Votacion(idVotacion, nombre, pregunta, opciones, true);
         votaciones.put(idVotacion, nuevaVotacion);
         System.out.println("Votación creada con éxito. ID de votación: " + idVotacion);
         guardarVotacionesEnArchivo();
@@ -102,11 +113,20 @@ public class ControladorVotaciones {
         }
     }
 
+    public void agregarYGuardarVotacion(String nombre, String pregunta, List<String> opciones) {
+        String idVotacion = "V" + contadorVotaciones++; // Formato V1, V2, V3, etc.
+        Votacion nuevaVotacion = new Votacion(idVotacion, nombre, pregunta, opciones, true); // Votación se crea activa
+        votaciones.put(idVotacion, nuevaVotacion);
+        guardarVotacionesEnArchivo();
+    }
+
+
     private void guardarVotacionesEnArchivo() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(VOTACIONES_FILE_PATH))) {
             for (Map.Entry<String, Votacion> entry : votaciones.entrySet()) {
                 Votacion votacion = entry.getValue();
-                pw.println(entry.getKey() + "," + votacion.getPregunta() + "," +
+                // Asegúrate de incluir todos los campos necesarios
+                pw.println(votacion.getId() + "," + votacion.getNombre() + "," + votacion.getPregunta() + "," +
                         String.join(",", votacion.getOpciones()) + "," +
                         (votacion.isActiva() ? "activa" : "inactiva"));
             }
@@ -116,29 +136,35 @@ public class ControladorVotaciones {
     }
 
 
+
     private void cargarVotacionesDesdeArchivo() {
         File file = new File(VOTACIONES_FILE_PATH);
         if (!file.exists()) {
+            System.out.println("Archivo no encontrado.");
             return;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String linea;
             while ((linea = br.readLine()) != null) {
                 String[] partes = linea.split(",");
+                if (partes.length < 5) { // Asegurarse de que hay al menos el ID, nombre, dos opciones y el estado
+                    System.out.println("Línea mal formada, omitiendo...");
+                    continue;
+                }
                 String idVotacion = partes[0];
-                String pregunta = partes[1];
-                List<String> opciones = Arrays.asList(partes).subList(2, partes.length - 1);
+                String nombre = partes[1];
+                String pregunta = partes[2];
+                List<String> opciones = new ArrayList<>(Arrays.asList(partes).subList(3, partes.length - 1)); // Extraer opciones
                 boolean activa = partes[partes.length - 1].equals("activa");
-                votaciones.put(idVotacion, new Votacion(pregunta, opciones, activa));
-
-                // Actualizar el contador de votaciones basado en el ID más alto
-                int currentIdNumber = Integer.parseInt(idVotacion.substring(1)); // Extrae el número después de 'V'
-                contadorVotaciones = Math.max(contadorVotaciones, currentIdNumber + 1);
+                votaciones.put(idVotacion, new Votacion(idVotacion, nombre, pregunta, opciones, activa));
+                System.out.println("Votación cargada: " + nombre + " - " + pregunta);
             }
         } catch (IOException e) {
             System.err.println("Error al leer el archivo de votaciones: " + e.getMessage());
         }
     }
+
+
 
 
     // Método para registrar un voto en el archivo de votos
