@@ -30,15 +30,26 @@ public class MainMenuFrame extends JFrame {
         JButton voteButton = new JButton("Votar");
         JButton resultsButton = new JButton("Ver resultados");
 
-        createVoteButton.addActionListener(e -> controladorFrame.mostrarCrearVotacionFrame());
-        voteButton.addActionListener(e -> controladorFrame.mostrarVotarFrame());
-        resultsButton.addActionListener(e -> controladorFrame.mostrarResultadosFrame());
+        // Añadir la acción correspondiente al botón con control de acceso según el rol
+        createVoteButton.addActionListener(e -> controladorFrame.mostrarCrearVotacionFrame(usuario));
+        voteButton.addActionListener(e -> controladorFrame.mostrarVotarFrame(usuario));  // Modificado para pasar el usuario
+        resultsButton.addActionListener(e -> controladorFrame.mostrarResultadosFrame(usuario));  // Añadido usuario si necesario
 
         add(welcomeLabel);
         add(createVoteButton);
         add(voteButton);
         add(resultsButton);
 
+        // Gestionar visibilidad de los botones según el rol del usuario
+        manageButtonVisibility(usuario.getRol());
+
         setVisible(true);
+    }
+
+    private void manageButtonVisibility(String role) {
+        if (role.equals("Votante")) {
+            // Si el usuario es solo un votante, oculta la opción de crear votaciones
+            getContentPane().getComponent(1).setVisible(false);
+        }
     }
 }

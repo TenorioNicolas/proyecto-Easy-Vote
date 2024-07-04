@@ -13,60 +13,51 @@ public class LoginFrame extends JFrame {
     public LoginFrame(ControladorFrame controladorFrame) {
         this.controladorFrame = controladorFrame;
         setTitle("Easy-Vote - Login");
-        setSize(300, 200);
-        setLocationRelativeTo(null);  // Centra la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         initComponents();
+        pack();  // Ajustar el tamaño de la ventana automáticamente
+        setLocationRelativeTo(null);  // Centra la ventana
     }
 
     private void initComponents() {
-        // Panel principal
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(5, 5, 5, 5);  // Margen para mejor visualización
 
-        // Etiqueta "Usuario"
+        // Usuario label and field
         JLabel usuarioLabel = new JLabel("Usuario:");
-        constraints.gridx = 0; // Columna 0
-        constraints.gridy = 0; // Fila 0
-        panel.add(usuarioLabel, constraints);
-
-        // Campo de texto "Usuario"
         usuarioField = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        panel.add(usuarioField, constraints);
+        setupComponent(panel, usuarioLabel, constraints, 0, 0);
+        setupComponent(panel, usuarioField, constraints, 1, 0);
 
-        // Etiqueta "Contraseña"
+        // Contraseña label and field
         JLabel contrasenaLabel = new JLabel("Contraseña:");
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        panel.add(contrasenaLabel, constraints);
-
-        // Campo de contraseña
         contrasenaField = new JPasswordField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 1;
-        panel.add(contrasenaField, constraints);
+        setupComponent(panel, contrasenaLabel, constraints, 0, 1);
+        setupComponent(panel, contrasenaField, constraints, 1, 1);
 
-        // Botón "Entrar"
+        // Botón entrar
         entrarButton = new JButton("Entrar");
         constraints.gridx = 0;
         constraints.gridy = 2;
-        constraints.gridwidth = 2;  // Ocupa dos columnas
-        constraints.insets = new Insets(10, 0, 0, 0);  // Margen superior
-        panel.add(entrarButton, constraints);
-
-        // Configuración del botón para usar el ControladorFrame
+        constraints.gridwidth = 2; // El botón abarca dos columnas
+        constraints.insets = new Insets(10, 0, 0, 0);  // Espacio superior para el botón
         entrarButton.addActionListener(e -> {
             String username = usuarioField.getText();
             String password = new String(contrasenaField.getPassword());
             controladorFrame.autenticarUsuario(username, password, this);
         });
+        panel.add(entrarButton, constraints);
 
-        // Agregar el panel al frame
         add(panel);
-        setVisible(true);  // Asegúrate de que la ventana sea visible
+        setVisible(true);  // Asegura que la ventana sea visible
+    }
+
+    private void setupComponent(JPanel panel, JComponent component, GridBagConstraints constraints, int x, int y) {
+        constraints.gridx = x;
+        constraints.gridy = y;
+        panel.add(component, constraints);
     }
 }

@@ -3,12 +3,14 @@ package lanzador;
 import datos.ControladorFrame;
 import datos.ControladorVotaciones;
 import datos.GestorUsuarios;
+import datos.GestorVotos; // Asegúrate de importar GestorVotos
 import ventanas.LoginFrame;
 
 public class Main {
     public static void main(String[] args) {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        ControladorVotaciones controladorVotaciones = new ControladorVotaciones();
+        GestorVotos gestorVotos = new GestorVotos(); // Crea una instancia de GestorVotos
+        ControladorVotaciones controladorVotaciones = new ControladorVotaciones(gestorVotos); // Pasa gestorVotos al constructor
 
         ControladorFrame controladorFrame = new ControladorFrame(gestorUsuarios, controladorVotaciones);
 

@@ -2,6 +2,7 @@ package datos;
 
 import dominio.Usuario;
 import ventanas.*;
+
 import javax.swing.*;
 
 public class ControladorFrame {
@@ -22,7 +23,7 @@ public class ControladorFrame {
         if (usuario != null) {
             JOptionPane.showMessageDialog(frame, "Bienvenido, " + usuario.getNombre() + "!");
             frame.dispose(); // Cierra la ventana de login
-            mostrarMainMenu(usuario); // Abre el menú principal
+            mostrarMainMenu(usuario); // Abre el menú principal según el rol del usuario
         } else {
             JOptionPane.showMessageDialog(frame, "Usuario o contraseña incorrectos", "Error de autenticación", JOptionPane.ERROR_MESSAGE);
         }
@@ -33,16 +34,23 @@ public class ControladorFrame {
         mainMenuFrame.setVisible(true);
     }
 
-    public void mostrarCrearVotacionFrame() {
-        CrearVotacionFrame crearVotacionFrame = new CrearVotacionFrame(this);
-        crearVotacionFrame.setVisible(true);
+    public void mostrarCrearVotacionFrame(Usuario usuario) {
+        if (usuario.getRol().equals("Creador")) {
+            CrearVotacionFrame crearVotacionFrame = new CrearVotacionFrame(this);
+            crearVotacionFrame.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "No tienes permiso para crear votaciones", "Acceso denegado", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
-    public void mostrarVotarFrame() {
-        VotarFrame votarFrame = new VotarFrame(getControladorVotaciones());
+    // Añadir el método mostrarVotarFrame ajustado en ControladorFrame
+    public void mostrarVotarFrame(Usuario usuario) {
+        VotarFrame votarFrame = new VotarFrame(getControladorVotaciones(), usuario);
         votarFrame.setVisible(true);
     }
 
-    public void mostrarResultadosFrame() {
+    // Y ajusta mostrarResultadosFrame si es necesario
+    public void mostrarResultadosFrame(Usuario usuario) {
+        // Implementar si necesario, de acuerdo con las funcionalidades específicas para mostrar resultados
     }
 }

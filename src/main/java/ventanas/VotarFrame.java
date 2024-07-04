@@ -2,18 +2,20 @@ package ventanas;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.awt.event.ActionEvent;
 import datos.ControladorVotaciones;
 import dominio.Votacion;
+import dominio.Usuario;
 
 public class VotarFrame extends JFrame {
     private ControladorVotaciones controladorVotaciones;
     private JPanel panelDeCartas;
     private CardLayout cardLayout;
+    private Usuario usuario;
 
-    public VotarFrame(ControladorVotaciones controlador) {
+    public VotarFrame(ControladorVotaciones controlador, Usuario usuario) {
         this.controladorVotaciones = controlador;
+        this.usuario = usuario;
         inicializarUI();
     }
 
@@ -32,7 +34,7 @@ public class VotarFrame extends JFrame {
     }
 
     private void configurarPanelListado() {
-        JPanel panelListado = new JPanel(new GridLayout(0, 1, 5, 5)); // Acomoda dinámicamente según el número de votaciones
+        JPanel panelListado = new JPanel(new GridLayout(0, 1, 5, 5));
         for (Votacion votacion : controladorVotaciones.getVotaciones()) {
             JButton botonVotacion = new JButton(votacion.getNombre() + " (" + votacion.getId() + ")");
             botonVotacion.addActionListener(e -> configurarPanelDetalle(votacion));
@@ -42,23 +44,22 @@ public class VotarFrame extends JFrame {
         cardLayout.show(panelDeCartas, "Listado");
     }
 
-
     private void configurarPanelDetalle(Votacion votacion) {
         JPanel panelDetalle = new JPanel();
         panelDetalle.setLayout(new BoxLayout(panelDetalle, BoxLayout.Y_AXIS));
 
-        JLabel nameLabel = new JLabel("Nombre: " + votacion.getNombre());
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        panelDetalle.add(nameLabel);
+        panelDetalle.add(new JLabel("Nombre: " + votacion.getNombre()));
+        panelDetalle.add(new JLabel("Pregunta: " + votacion.getPregunta()));
 
-        JLabel questionLabel = new JLabel("Pregunta: " + votacion.getPregunta());
-        questionLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        panelDetalle.add(questionLabel);
-
-        // Convertir cada opción en un botón
         votacion.getOpciones().forEach(opcion -> {
             JButton opcionButton = new JButton(opcion);
-            opcionButton.addActionListener(e -> confirmarVoto(votacion, opcion));
+            opcionButton.addActionListener(e -> {
+                if (controladorVotaciones.getGestorVotos().usuarioHaVotado(votacion.getId(), usuario.getMatricula())) {
+                    JOptionPane.showMessageDialog(this, "Ya has votado en esta votación.");
+                } else {
+                    confirmarVoto(votacion, opcion);
+                }
+            });
             panelDetalle.add(opcionButton);
         });
 
@@ -70,7 +71,6 @@ public class VotarFrame extends JFrame {
         cardLayout.show(panelDeCartas, votacion.getId());
     }
 
-    // Necesitarás modificar el método confirmarVoto para recibir la opción seleccionada
     private void confirmarVoto(Votacion votacion, String opcionSeleccionada) {
         int resultado = JOptionPane.showConfirmDialog(this,
                 "¿Estás seguro de que quieres votar por " + opcionSeleccionada + "?",
@@ -78,7 +78,7 @@ public class VotarFrame extends JFrame {
                 JOptionPane.YES_NO_OPTION);
 
         if (resultado == JOptionPane.YES_OPTION) {
-            controladorVotaciones.registrarVoto(votacion.getId(), "matriculaUsuario", opcionSeleccionada);
+            controladorVotaciones.getGestorVotos().registrarVoto(votacion.getId(), usuario.getMatricula(), opcionSeleccionada);
             JOptionPane.showMessageDialog(this, "Voto registrado con éxito para: " + opcionSeleccionada);
             cardLayout.show(panelDeCartas, "Listado");
         }
