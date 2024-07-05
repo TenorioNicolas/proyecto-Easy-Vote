@@ -60,10 +60,6 @@ public class ControladorVotaciones {
                 .collect(Collectors.toList());
     }
 
-    public Votacion obtenerVotacionPorID(String idVotacion) {
-        return votaciones.get(idVotacion);
-    }
-
     public void crearVotacion(String nombre, String pregunta, List<String> opciones) {
         String idVotacion = "V" + (++contadorVotaciones); // Incrementar primero para asegurar un nuevo ID
         Votacion nuevaVotacion = new Votacion(idVotacion, nombre, pregunta, opciones, true);
@@ -93,5 +89,9 @@ public class ControladorVotaciones {
 
     public GestorVotos getGestorVotos() {
         return gestorVotos;
+    }
+
+    public Map<String, Integer> obtenerResultadosVotacion(String idVotacion) {
+        return gestorVotos.contarVotos(idVotacion);
     }
 }

@@ -54,7 +54,8 @@ public class ControladorFrame {
     }
 
     public void mostrarResultadosFrame(Usuario usuario) {
-        // Implementar si necesario, de acuerdo con las funcionalidades específicas para mostrar resultados
+        VerResultadosFrame verResultadosFrame = new VerResultadosFrame(getControladorVotaciones());
+        verResultadosFrame.setVisible(true);
     }
 
     public void mostrarDeshabilitarVotacionFrame(Usuario usuario) {

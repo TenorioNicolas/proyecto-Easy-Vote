@@ -1,5 +1,7 @@
 package datos;
 
+import dominio.Votacion;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,5 +56,26 @@ public class GestorVotos {
 
     public boolean usuarioHaVotado(String idVotacion, String matriculaUsuario) {
         return votosRegistrados.containsKey(idVotacion) && votosRegistrados.get(idVotacion).containsKey(matriculaUsuario);
+    }
+
+    public Map<String, Integer> contarVotos(String idVotacion) {
+        Map<String, Integer> resultados = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(VOTOS_FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length < 3) continue; // Ignora líneas mal formadas
+
+                String votoIdVotacion = parts[0];
+                String voto = parts[2];
+
+                if (votoIdVotacion.equals(idVotacion)) {
+                    resultados.put(voto, resultados.getOrDefault(voto, 0) + 1);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo de votos: " + e.getMessage());
+        }
+        return resultados;
     }
 }

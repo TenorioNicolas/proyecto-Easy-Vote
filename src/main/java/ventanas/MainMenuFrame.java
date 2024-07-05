@@ -31,10 +31,25 @@ public class MainMenuFrame extends JFrame {
         JButton botonDeshabilitarVotacion = new JButton("Deshabilitar Votación");
         JButton botonVerResultados = new JButton("Ver resultados");
 
-        botonCrearVotacion.addActionListener(e -> controladorFrame.mostrarCrearVotacionFrame(usuario));
-        botonVotar.addActionListener(e -> controladorFrame.mostrarVotarFrame(usuario));
-        botonDeshabilitarVotacion.addActionListener(e -> controladorFrame.mostrarDeshabilitarVotacionFrame(usuario));
-        botonVerResultados.addActionListener(e -> controladorFrame.mostrarResultadosFrame(usuario));
+        botonCrearVotacion.addActionListener(e -> {
+            controladorFrame.mostrarCrearVotacionFrame(usuario);
+            this.dispose(); // Cierra la ventana del menú principal
+        });
+
+        botonVotar.addActionListener(e -> {
+            controladorFrame.mostrarVotarFrame(usuario);
+            this.dispose(); // Cierra la ventana del menú principal
+        });
+
+        botonDeshabilitarVotacion.addActionListener(e -> {
+            controladorFrame.mostrarDeshabilitarVotacionFrame(usuario);
+            this.dispose(); // Cierra la ventana del menú principal
+        });
+
+        botonVerResultados.addActionListener(e -> {
+            controladorFrame.mostrarResultadosFrame(usuario);
+            this.dispose(); // Cierra la ventana del menú principal
+        });
 
         add(etiquetaBienvenida);
         add(botonCrearVotacion);

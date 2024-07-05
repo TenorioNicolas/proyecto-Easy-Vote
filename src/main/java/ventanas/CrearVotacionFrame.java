@@ -29,7 +29,7 @@ public class CrearVotacionFrame extends JFrame {
 
     private void inicializarInterfaz() {
         setTitle("Crear Nueva Votación");
-        setSize(400, 300);
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -61,8 +61,8 @@ public class CrearVotacionFrame extends JFrame {
 
     private void configurarPanelPregunta() {
         JPanel panelPregunta = new JPanel();
-        panelPregunta.add(new JLabel("Pregunta:"));
         campoPregunta = new JTextField(20);
+        panelPregunta.add(new JLabel("Pregunta:"));
         panelPregunta.add(campoPregunta);
         JButton botonSiguiente = new JButton("Siguiente");
         botonSiguiente.addActionListener(e -> {
@@ -77,7 +77,7 @@ public class CrearVotacionFrame extends JFrame {
     }
 
     private void configurarPanelCantidadOpciones() {
-        JPanel panelCantidadOpciones = new JPanel();
+        JPanel panelCantidadOpciones = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelCantidadOpciones.add(new JLabel("Seleccione la cantidad de opciones:"));
         Integer[] opcionesCantidad = IntStream.rangeClosed(2, 10).boxed().toArray(Integer[]::new);
         comboBoxCantidadOpciones = new JComboBox<>(opcionesCantidad);
@@ -85,9 +85,6 @@ public class CrearVotacionFrame extends JFrame {
         JButton botonSiguiente = new JButton("Siguiente");
         botonSiguiente.addActionListener(e -> configurarYMostrarPanelAgregarOpciones());
         panelCantidadOpciones.add(botonSiguiente);
-        JButton botonVolver = new JButton("Volver");
-        botonVolver.addActionListener(e -> mostrarTarjeta(PANEL_PREGUNTA));
-        panelCantidadOpciones.add(botonVolver);
         tarjetas.add(panelCantidadOpciones, PANEL_CANTIDAD_OPCIONES);
     }
 
@@ -112,16 +109,15 @@ public class CrearVotacionFrame extends JFrame {
 
     private void mostrarVistaPrevia(ActionEvent e) {
         boolean todosCamposValidos = true;
+        // Validaciones de campos vacíos
         if (campoNombreVotacion.getText().trim().isEmpty()) {
             mostrarDialogoError("El nombre de la votación no puede estar vacío.");
             todosCamposValidos = false;
         }
-
         if (campoPregunta.getText().trim().isEmpty()) {
             mostrarDialogoError("La pregunta de la votación no puede estar vacía.");
             todosCamposValidos = false;
         }
-
         for (JTextField campoOpcion : camposOpciones) {
             if (campoOpcion.getText().trim().isEmpty()) {
                 mostrarDialogoError("Todas las opciones deben contener texto.");
@@ -130,6 +126,7 @@ public class CrearVotacionFrame extends JFrame {
             }
         }
 
+        // Si todos los campos son válidos, se muestra la vista previa
         if (todosCamposValidos) {
             JPanel panelPrevia = new JPanel();
             panelPrevia.setLayout(new BoxLayout(panelPrevia, BoxLayout.Y_AXIS));
@@ -139,7 +136,13 @@ public class CrearVotacionFrame extends JFrame {
             camposOpciones.forEach(campo -> panelPrevia.add(new JLabel("Opción: " + campo.getText())));
             JButton botonCrear = new JButton("Crear");
             botonCrear.addActionListener(this::manejarCrearVotacion);
+            JButton botonCancelar = new JButton("Cancelar");
+            botonCancelar.addActionListener(ev -> {
+                JOptionPane.showMessageDialog(this, "Creación de votación cancelada.", "Cancelado", JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0); // Termina la aplicación
+            });
             panelPrevia.add(botonCrear);
+            panelPrevia.add(botonCancelar);
             tarjetas.add(panelPrevia, PANEL_PREVIA);
             mostrarTarjeta(PANEL_PREVIA);
         }
@@ -150,8 +153,9 @@ public class CrearVotacionFrame extends JFrame {
         camposOpciones.forEach(campo -> opciones.add(campo.getText().trim()));
         controladorFrame.getControladorVotaciones().crearVotacion(campoNombreVotacion.getText().trim(), campoPregunta.getText().trim(), opciones);
         JOptionPane.showMessageDialog(this, "Votación '" + campoNombreVotacion.getText() + "' creada con éxito!");
-        dispose();
+        System.exit(0);  // Termina completamente la aplicación después de mostrar el mensaje
     }
+
 
     private void mostrarDialogoError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
