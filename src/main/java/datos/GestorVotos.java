@@ -1,23 +1,24 @@
 package datos;
 
-import dominio.Votacion;
+import java.io.*; // Importación de clases de IO para manejo de archivos.
+import java.util.HashMap; // Importación de HashMap para almacenamiento en memoria de votos.
+import java.util.Map; // Importación de la interfaz Map para el manejo de colecciones de pares clave-valor.
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-
+// Clase GestorVotos para gestionar las operaciones relacionadas con los votos de las votaciones.
 public class GestorVotos {
-    private final String VOTOS_FILE_PATH = "votos.csv";
-    private Map<String, Map<String, String>> votosRegistrados = new HashMap<>();
+    private final String VOTOS_FILE_PATH = "votos.csv"; // Ruta del archivo CSV donde se guardan los votos.
+    private Map<String, Map<String, String>> votosRegistrados = new HashMap<>(); // Estructura para almacenar los votos.
 
+    // Constructor que carga los votos desde un archivo al crear una instancia de GestorVotos.
     public GestorVotos() {
         cargarVotosDesdeArchivo();
     }
 
+    // Método para cargar votos desde un archivo CSV.
     private void cargarVotosDesdeArchivo() {
-        File file = new File(VOTOS_FILE_PATH);
+        File file = new File(VOTOS_FILE_PATH); // Crea un objeto File para el archivo de votos.
         if (!file.exists()) {
-            return;
+            return; // Si el archivo no existe, sale del método.
         }
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String linea;
@@ -34,12 +35,14 @@ public class GestorVotos {
         }
     }
 
+    // Método para registrar un nuevo voto en el sistema y actualizar el archivo de votos.
     public void registrarVoto(String idVotacion, String matriculaUsuario, String opcionSeleccionada) {
         votosRegistrados.putIfAbsent(idVotacion, new HashMap<>());
         votosRegistrados.get(idVotacion).put(matriculaUsuario, opcionSeleccionada);
         guardarVotosEnArchivo();
     }
 
+    // Método para guardar todos los votos en un archivo CSV.
     private void guardarVotosEnArchivo() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(VOTOS_FILE_PATH))) {
             for (Map.Entry<String, Map<String, String>> votacionEntry : votosRegistrados.entrySet()) {
@@ -54,27 +57,19 @@ public class GestorVotos {
         }
     }
 
+    // Método para verificar si un usuario ha votado en una votación específica.
     public boolean usuarioHaVotado(String idVotacion, String matriculaUsuario) {
         return votosRegistrados.containsKey(idVotacion) && votosRegistrados.get(idVotacion).containsKey(matriculaUsuario);
     }
 
+    // Método para contar los votos de una votación específica y retornar un mapa con los resultados.
     public Map<String, Integer> contarVotos(String idVotacion) {
         Map<String, Integer> resultados = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(VOTOS_FILE_PATH))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length < 3) continue; // Ignora líneas mal formadas
-
-                String votoIdVotacion = parts[0];
-                String voto = parts[2];
-
-                if (votoIdVotacion.equals(idVotacion)) {
-                    resultados.put(voto, resultados.getOrDefault(voto, 0) + 1);
-                }
+        if (votosRegistrados.containsKey(idVotacion)) {
+            Map<String, String> votosParaVotacion = votosRegistrados.get(idVotacion);
+            for (String voto : votosParaVotacion.values()) {
+                resultados.put(voto, resultados.getOrDefault(voto, 0) + 1);
             }
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo de votos: " + e.getMessage());
         }
         return resultados;
     }
