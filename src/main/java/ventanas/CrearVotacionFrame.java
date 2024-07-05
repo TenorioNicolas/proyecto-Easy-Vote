@@ -10,163 +10,155 @@ import datos.ControladorFrame;
 
 public class CrearVotacionFrame extends JFrame {
     private ControladorFrame controladorFrame;
-    private JPanel cards; // Panel que contiene las "tarjetas"
-    private final static String NAME_PANEL = "Card with voting name";
-    private final static String QUESTION_PANEL = "Card with voting question";
-    private final static String OPTIONS_COUNT_PANEL = "Card with options count";
-    private final static String ADD_OPTIONS_PANEL = "Card with add options";
-    private final static String PREVIEW_PANEL = "Card with preview";
+    private JPanel tarjetas;
+    private final static String PANEL_NOMBRE = "Tarjeta con nombre de votación";
+    private final static String PANEL_PREGUNTA = "Tarjeta con pregunta de votación";
+    private final static String PANEL_CANTIDAD_OPCIONES = "Tarjeta con cantidad de opciones";
+    private final static String PANEL_AGREGAR_OPCIONES = "Tarjeta para agregar opciones";
+    private final static String PANEL_PREVIA = "Tarjeta con vista previa";
 
-    private JTextField nombreVotacionField;
-    private JTextField questionField;
-    private JComboBox<Integer> optionsCountComboBox;
-    private List<JTextField> optionFields; // Lista para mantener referencias a los campos de opciones
+    private JTextField campoNombreVotacion;
+    private JTextField campoPregunta;
+    private JComboBox<Integer> comboBoxCantidadOpciones;
+    private List<JTextField> camposOpciones;
 
     public CrearVotacionFrame(ControladorFrame controladorFrame) {
         this.controladorFrame = controladorFrame;
-        initializeUI();
+        inicializarInterfaz();
     }
 
-    private void initializeUI() {
+    private void inicializarInterfaz() {
         setTitle("Crear Nueva Votación");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        cards = new JPanel(new CardLayout());
-        setupNamePanel();
-        setupQuestionPanel();
-        setupOptionsCountPanel();
-        add(cards, BorderLayout.CENTER);
+        tarjetas = new JPanel(new CardLayout());
+        configurarPanelNombre();
+        configurarPanelPregunta();
+        configurarPanelCantidadOpciones();
+        add(tarjetas, BorderLayout.CENTER);
         setVisible(true);
     }
 
-    private void setupNamePanel() {
-        JPanel namePanel = new JPanel();
-        nombreVotacionField = new JTextField(20);
-        namePanel.add(new JLabel("Nombre de la Votación:"));
-        namePanel.add(nombreVotacionField);
-        JButton nextToQuestionButton = new JButton("Siguiente");
-        nextToQuestionButton.addActionListener(e -> {
-            if (nombreVotacionField.getText().trim().isEmpty()) {
-                showErrorDialog("El nombre de la votación no puede estar vacío.");
+    private void configurarPanelNombre() {
+        JPanel panelNombre = new JPanel();
+        campoNombreVotacion = new JTextField(20);
+        panelNombre.add(new JLabel("Nombre de la Votación:"));
+        panelNombre.add(campoNombreVotacion);
+        JButton botonSiguiente = new JButton("Siguiente");
+        botonSiguiente.addActionListener(e -> {
+            if (campoNombreVotacion.getText().trim().isEmpty()) {
+                mostrarDialogoError("El nombre de la votación no puede estar vacío.");
             } else {
-                showCard(QUESTION_PANEL);
+                mostrarTarjeta(PANEL_PREGUNTA);
             }
         });
-        namePanel.add(nextToQuestionButton);
-        cards.add(namePanel, NAME_PANEL);
+        panelNombre.add(botonSiguiente);
+        tarjetas.add(panelNombre, PANEL_NOMBRE);
     }
 
-    private void setupQuestionPanel() {
-        JPanel questionPanel = new JPanel();
-        questionPanel.add(new JLabel("Pregunta:"));
-        questionField = new JTextField(20);
-        questionPanel.add(questionField);
-        JButton nextToOptionsCountButton = new JButton("Siguiente");
-        nextToOptionsCountButton.addActionListener(e -> {
-            if (questionField.getText().trim().isEmpty()) {
-                showErrorDialog("La pregunta de la votación no puede estar vacía.");
+    private void configurarPanelPregunta() {
+        JPanel panelPregunta = new JPanel();
+        panelPregunta.add(new JLabel("Pregunta:"));
+        campoPregunta = new JTextField(20);
+        panelPregunta.add(campoPregunta);
+        JButton botonSiguiente = new JButton("Siguiente");
+        botonSiguiente.addActionListener(e -> {
+            if (campoPregunta.getText().trim().isEmpty()) {
+                mostrarDialogoError("La pregunta de la votación no puede estar vacía.");
             } else {
-                showCard(OPTIONS_COUNT_PANEL);
+                mostrarTarjeta(PANEL_CANTIDAD_OPCIONES);
             }
         });
-        questionPanel.add(nextToOptionsCountButton);
-        cards.add(questionPanel, QUESTION_PANEL);
+        panelPregunta.add(botonSiguiente);
+        tarjetas.add(panelPregunta, PANEL_PREGUNTA);
     }
 
-    private void setupOptionsCountPanel() {
-        JPanel optionsCountPanel = new JPanel();
-        optionsCountPanel.add(new JLabel("Seleccione la cantidad de opciones:"));
-        Integer[] optionsCounts = IntStream.rangeClosed(2, 10).boxed().toArray(Integer[]::new);
-        optionsCountComboBox = new JComboBox<>(optionsCounts);
-        optionsCountPanel.add(optionsCountComboBox);
-        JButton nextToAddOptionsButton = new JButton("Siguiente");
-        nextToAddOptionsButton.addActionListener(e -> setupAndShowAddOptionsPanel());
-        optionsCountPanel.add(nextToAddOptionsButton);
-        JButton backButton = new JButton("Volver");
-        backButton.addActionListener(e -> showCard(QUESTION_PANEL));
-        optionsCountPanel.add(backButton);
-        cards.add(optionsCountPanel, OPTIONS_COUNT_PANEL);
+    private void configurarPanelCantidadOpciones() {
+        JPanel panelCantidadOpciones = new JPanel();
+        panelCantidadOpciones.add(new JLabel("Seleccione la cantidad de opciones:"));
+        Integer[] opcionesCantidad = IntStream.rangeClosed(2, 10).boxed().toArray(Integer[]::new);
+        comboBoxCantidadOpciones = new JComboBox<>(opcionesCantidad);
+        panelCantidadOpciones.add(comboBoxCantidadOpciones);
+        JButton botonSiguiente = new JButton("Siguiente");
+        botonSiguiente.addActionListener(e -> configurarYMostrarPanelAgregarOpciones());
+        panelCantidadOpciones.add(botonSiguiente);
+        JButton botonVolver = new JButton("Volver");
+        botonVolver.addActionListener(e -> mostrarTarjeta(PANEL_PREGUNTA));
+        panelCantidadOpciones.add(botonVolver);
+        tarjetas.add(panelCantidadOpciones, PANEL_CANTIDAD_OPCIONES);
     }
 
-    private void setupAndShowAddOptionsPanel() {
-        int numberOfOptions = (Integer) optionsCountComboBox.getSelectedItem();
-        JPanel addOptionsPanel = new JPanel();
-        addOptionsPanel.setLayout(new BoxLayout(addOptionsPanel, BoxLayout.Y_AXIS));
-        addOptionsPanel.add(new JLabel("Ingrese el contenido de las opciones:"));
-        optionFields = new ArrayList<>();
-        for (int i = 0; i < numberOfOptions; i++) {
-            JTextField optionField = new JTextField(20);
-            addOptionsPanel.add(new JLabel("Opción " + (i + 1) + ":"));
-            addOptionsPanel.add(optionField);
-            optionFields.add(optionField);
+    private void configurarYMostrarPanelAgregarOpciones() {
+        int cantidadOpciones = (Integer) comboBoxCantidadOpciones.getSelectedItem();
+        JPanel panelAgregarOpciones = new JPanel();
+        panelAgregarOpciones.setLayout(new BoxLayout(panelAgregarOpciones, BoxLayout.Y_AXIS));
+        panelAgregarOpciones.add(new JLabel("Ingrese el contenido de las opciones:"));
+        camposOpciones = new ArrayList<>();
+        for (int i = 0; i < cantidadOpciones; i++) {
+            JTextField campoOpcion = new JTextField(20);
+            panelAgregarOpciones.add(new JLabel("Opción " + (i + 1) + ":"));
+            panelAgregarOpciones.add(campoOpcion);
+            camposOpciones.add(campoOpcion);
         }
-        JButton nextToPreviewButton = new JButton("Vista Previa");
-        nextToPreviewButton.addActionListener(this::showPreviewPanel);
-        addOptionsPanel.add(nextToPreviewButton);
-        cards.add(addOptionsPanel, ADD_OPTIONS_PANEL);
-        showCard(ADD_OPTIONS_PANEL);
+        JButton botonVistaPrevia = new JButton("Vista Previa");
+        botonVistaPrevia.addActionListener(this::mostrarVistaPrevia);
+        panelAgregarOpciones.add(botonVistaPrevia);
+        tarjetas.add(panelAgregarOpciones, PANEL_AGREGAR_OPCIONES);
+        mostrarTarjeta(PANEL_AGREGAR_OPCIONES);
     }
 
-    private void showPreviewPanel(ActionEvent e) {
-        boolean allFieldsValid = true;
-
-        // Chequea que el nombre de la votación no esté vacío
-        if (nombreVotacionField.getText().trim().isEmpty()) {
-            showErrorDialog("El nombre de la votación no puede estar vacío.");
-            allFieldsValid = false;
+    private void mostrarVistaPrevia(ActionEvent e) {
+        boolean todosCamposValidos = true;
+        if (campoNombreVotacion.getText().trim().isEmpty()) {
+            mostrarDialogoError("El nombre de la votación no puede estar vacío.");
+            todosCamposValidos = false;
         }
 
-        // Chequea que la pregunta de la votación no esté vacía
-        if (questionField.getText().trim().isEmpty()) {
-            showErrorDialog("La pregunta de la votación no puede estar vacía.");
-            allFieldsValid = false;
+        if (campoPregunta.getText().trim().isEmpty()) {
+            mostrarDialogoError("La pregunta de la votación no puede estar vacía.");
+            todosCamposValidos = false;
         }
 
-        // Chequea que todas las opciones estén llenas
-        for (JTextField optionField : optionFields) {
-            if (optionField.getText().trim().isEmpty()) {
-                showErrorDialog("Todas las opciones deben contener texto.");
-                allFieldsValid = false;
+        for (JTextField campoOpcion : camposOpciones) {
+            if (campoOpcion.getText().trim().isEmpty()) {
+                mostrarDialogoError("Todas las opciones deben contener texto.");
+                todosCamposValidos = false;
                 break;
             }
         }
 
-        if (allFieldsValid) {
-            JPanel previewPanel = new JPanel();
-            previewPanel.setLayout(new BoxLayout(previewPanel, BoxLayout.Y_AXIS));
-            previewPanel.add(new JLabel("Vista previa de la Votación:"));
-            previewPanel.add(new JLabel("Nombre: " + nombreVotacionField.getText()));
-            previewPanel.add(new JLabel("Pregunta: " + questionField.getText()));
-            optionFields.forEach(field -> previewPanel.add(new JLabel("Opción: " + field.getText())));
-            JButton createButton = new JButton("Crear");
-            createButton.addActionListener(this::handleCreateVotation);
-            previewPanel.add(createButton);
-            cards.add(previewPanel, PREVIEW_PANEL);
-            showCard(PREVIEW_PANEL);
+        if (todosCamposValidos) {
+            JPanel panelPrevia = new JPanel();
+            panelPrevia.setLayout(new BoxLayout(panelPrevia, BoxLayout.Y_AXIS));
+            panelPrevia.add(new JLabel("Vista previa de la Votación:"));
+            panelPrevia.add(new JLabel("Nombre: " + campoNombreVotacion.getText()));
+            panelPrevia.add(new JLabel("Pregunta: " + campoPregunta.getText()));
+            camposOpciones.forEach(campo -> panelPrevia.add(new JLabel("Opción: " + campo.getText())));
+            JButton botonCrear = new JButton("Crear");
+            botonCrear.addActionListener(this::manejarCrearVotacion);
+            panelPrevia.add(botonCrear);
+            tarjetas.add(panelPrevia, PANEL_PREVIA);
+            mostrarTarjeta(PANEL_PREVIA);
         }
     }
 
-    private void handleCreateVotation(ActionEvent e) {
-        // Aquí se puede asumir que todas las validaciones ya se hicieron en el método showPreviewPanel
+    private void manejarCrearVotacion(ActionEvent e) {
         List<String> opciones = new ArrayList<>();
-        for (JTextField field : optionFields) {
-            opciones.add(field.getText().trim());
-        }
-        controladorFrame.getControladorVotaciones().crearVotacion(nombreVotacionField.getText().trim(), questionField.getText().trim(), opciones);
-        JOptionPane.showMessageDialog(this, "Votación '" + nombreVotacionField.getText() + "' creada con éxito!");
+        camposOpciones.forEach(campo -> opciones.add(campo.getText().trim()));
+        controladorFrame.getControladorVotaciones().crearVotacion(campoNombreVotacion.getText().trim(), campoPregunta.getText().trim(), opciones);
+        JOptionPane.showMessageDialog(this, "Votación '" + campoNombreVotacion.getText() + "' creada con éxito!");
         dispose();
     }
 
-
-    private void showErrorDialog(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    private void mostrarDialogoError(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void showCard(String cardName) {
-        CardLayout cl = (CardLayout) (cards.getLayout());
-        cl.show(cards, cardName);
+    private void mostrarTarjeta(String nombreTarjeta) {
+        CardLayout cl = (CardLayout) (tarjetas.getLayout());
+        cl.show(tarjetas, nombreTarjeta);
     }
 }

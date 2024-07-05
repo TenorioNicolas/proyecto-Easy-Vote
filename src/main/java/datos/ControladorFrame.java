@@ -9,6 +9,11 @@ public class ControladorFrame {
     private GestorUsuarios gestorUsuarios;
     private ControladorVotaciones controladorVotaciones;
 
+    // Modificado para inicializar las dependencias si no se pasan como argumentos
+    public ControladorFrame() {
+        this(new GestorUsuarios(), new ControladorVotaciones(new GestorVotos()));
+    }
+
     public ControladorFrame(GestorUsuarios gestorUsuarios, ControladorVotaciones controladorVotaciones) {
         this.gestorUsuarios = gestorUsuarios;
         this.controladorVotaciones = controladorVotaciones;
@@ -43,14 +48,21 @@ public class ControladorFrame {
         }
     }
 
-    // Añadir el método mostrarVotarFrame ajustado en ControladorFrame
     public void mostrarVotarFrame(Usuario usuario) {
         VotarFrame votarFrame = new VotarFrame(getControladorVotaciones(), usuario);
         votarFrame.setVisible(true);
     }
 
-    // Y ajusta mostrarResultadosFrame si es necesario
     public void mostrarResultadosFrame(Usuario usuario) {
         // Implementar si necesario, de acuerdo con las funcionalidades específicas para mostrar resultados
+    }
+
+    public void mostrarDeshabilitarVotacionFrame(Usuario usuario) {
+        if (usuario.getRol().equals("Creador")) {
+            DeshabilitarVotacionFrame disableVotingFrame = new DeshabilitarVotacionFrame(getControladorVotaciones());
+            disableVotingFrame.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "No tienes permiso para deshabilitar votaciones", "Acceso denegado", JOptionPane.WARNING_MESSAGE);
+        }
     }
 }

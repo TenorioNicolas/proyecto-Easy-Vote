@@ -3,6 +3,7 @@ package datos;
 import dominio.Votacion;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ControladorVotaciones {
     private Map<String, Votacion> votaciones = new HashMap<>();
@@ -51,6 +52,12 @@ public class ControladorVotaciones {
 
     public List<Votacion> getVotaciones() {
         return new ArrayList<>(votaciones.values());
+    }
+
+    public List<Votacion> getVotacionesActivas() {
+        return votaciones.values().stream()
+                .filter(Votacion::isActiva)
+                .collect(Collectors.toList());
     }
 
     public Votacion obtenerVotacionPorID(String idVotacion) {

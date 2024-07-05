@@ -13,43 +13,44 @@ public class MainMenuFrame extends JFrame {
     public MainMenuFrame(ControladorFrame controladorFrame, Usuario usuario) {
         this.controladorFrame = controladorFrame;
         this.usuario = usuario;
-        initializeUI();
+        inicializarInterfaz();
     }
 
-    private void initializeUI() {
+    private void inicializarInterfaz() {
         setTitle("Menú Principal - Easy Vote");
-        setSize(350, 200);
+        setSize(350, 250);  // Ajuste en el tamaño para acomodar un botón adicional
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(4, 1, 10, 10));  // 4 rows, 1 column, with padding
+        setLayout(new GridLayout(5, 1, 10, 10));  // Ajustado a 5 filas para el nuevo botón
 
-        JLabel welcomeLabel = new JLabel("BIENVENIDO, " + usuario.getNombre().toUpperCase() + "!", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        JLabel etiquetaBienvenida = new JLabel("BIENVENIDO, " + usuario.getNombre().toUpperCase() + "!", SwingConstants.CENTER);
+        etiquetaBienvenida.setFont(new Font("Arial", Font.BOLD, 16));
 
-        JButton createVoteButton = new JButton("Crear Votación");
-        JButton voteButton = new JButton("Votar");
-        JButton resultsButton = new JButton("Ver resultados");
+        JButton botonCrearVotacion = new JButton("Crear Votación");
+        JButton botonVotar = new JButton("Votar");
+        JButton botonDeshabilitarVotacion = new JButton("Deshabilitar Votación");
+        JButton botonVerResultados = new JButton("Ver resultados");
 
-        // Añadir la acción correspondiente al botón con control de acceso según el rol
-        createVoteButton.addActionListener(e -> controladorFrame.mostrarCrearVotacionFrame(usuario));
-        voteButton.addActionListener(e -> controladorFrame.mostrarVotarFrame(usuario));  // Modificado para pasar el usuario
-        resultsButton.addActionListener(e -> controladorFrame.mostrarResultadosFrame(usuario));  // Añadido usuario si necesario
+        botonCrearVotacion.addActionListener(e -> controladorFrame.mostrarCrearVotacionFrame(usuario));
+        botonVotar.addActionListener(e -> controladorFrame.mostrarVotarFrame(usuario));
+        botonDeshabilitarVotacion.addActionListener(e -> controladorFrame.mostrarDeshabilitarVotacionFrame(usuario));
+        botonVerResultados.addActionListener(e -> controladorFrame.mostrarResultadosFrame(usuario));
 
-        add(welcomeLabel);
-        add(createVoteButton);
-        add(voteButton);
-        add(resultsButton);
+        add(etiquetaBienvenida);
+        add(botonCrearVotacion);
+        add(botonVotar);
+        add(botonDeshabilitarVotacion);
+        add(botonVerResultados);
 
-        // Gestionar visibilidad de los botones según el rol del usuario
-        manageButtonVisibility(usuario.getRol());
+        gestionarVisibilidadBotones(usuario.getRol());
 
         setVisible(true);
     }
 
-    private void manageButtonVisibility(String role) {
-        if (role.equals("Votante")) {
-            // Si el usuario es solo un votante, oculta la opción de crear votaciones
-            getContentPane().getComponent(1).setVisible(false);
+    private void gestionarVisibilidadBotones(String rol) {
+        if (!rol.equals("Creador")) {
+            getContentPane().getComponent(1).setVisible(false);  // Oculta "Crear Votación"
+            getContentPane().getComponent(3).setVisible(false);  // Oculta "Deshabilitar Votación"
         }
     }
 }

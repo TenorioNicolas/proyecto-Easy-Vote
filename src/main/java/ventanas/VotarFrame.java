@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import datos.ControladorVotaciones;
 import dominio.Votacion;
 import dominio.Usuario;
+import java.util.List;
 
 public class VotarFrame extends JFrame {
     private ControladorVotaciones controladorVotaciones;
@@ -34,25 +35,59 @@ public class VotarFrame extends JFrame {
     }
 
     private void configurarPanelListado() {
-        JPanel panelListado = new JPanel(new GridLayout(0, 1, 5, 5));
-        for (Votacion votacion : controladorVotaciones.getVotaciones()) {
-            JButton botonVotacion = new JButton(votacion.getNombre() + " (" + votacion.getId() + ")");
-            botonVotacion.addActionListener(e -> configurarPanelDetalle(votacion));
-            panelListado.add(botonVotacion);
+        List<Votacion> votacionesDisponibles = controladorVotaciones.getVotaciones();
+        if (votacionesDisponibles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay votaciones disponibles.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0); // Termina completamente la aplicación
+            return;
         }
+
+        JPanel panelListado = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        JLabel titulo = new JLabel("Votaciones Disponibles", SwingConstants.CENTER);
+        titulo.setFont(new Font("Arial", Font.BOLD, 16));
+        panelListado.add(titulo, gbc);
+
+        for (Votacion votacion : votacionesDisponibles) {
+            JButton botonVotacion = new JButton(votacion.getNombre() + " (" + votacion.getId() + ")");
+            botonVotacion.setPreferredSize(new Dimension(200, 30)); // Establecer el tamaño preferido para todos los botones
+            botonVotacion.addActionListener(e -> configurarPanelDetalle(votacion));
+            panelListado.add(botonVotacion, gbc);
+        }
+
         panelDeCartas.add(panelListado, "Listado");
         cardLayout.show(panelDeCartas, "Listado");
     }
 
     private void configurarPanelDetalle(Votacion votacion) {
-        JPanel panelDetalle = new JPanel();
-        panelDetalle.setLayout(new BoxLayout(panelDetalle, BoxLayout.Y_AXIS));
+        JPanel panelDetalle = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        panelDetalle.add(new JLabel("Nombre: " + votacion.getNombre()));
-        panelDetalle.add(new JLabel("Pregunta: " + votacion.getPregunta()));
+        JLabel nombreLabel = new JLabel("Nombre: " + votacion.getNombre());
+        nombreLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        JLabel preguntaLabel = new JLabel("Pregunta: " + votacion.getPregunta());
+        preguntaLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        panelDetalle.add(nombreLabel, gbc);
+        panelDetalle.add(preguntaLabel, gbc);
+
+        if (!votacion.isActiva()) {
+            JOptionPane.showMessageDialog(this, "Esta votación está inactiva.", "Votación Inactiva", JOptionPane.WARNING_MESSAGE);
+            cardLayout.show(panelDeCartas, "Listado"); // Retorna al listado después de mostrar el mensaje
+            return;
+        }
 
         votacion.getOpciones().forEach(opcion -> {
             JButton opcionButton = new JButton(opcion);
+            opcionButton.setPreferredSize(new Dimension(200, 30));
             opcionButton.addActionListener(e -> {
                 if (controladorVotaciones.getGestorVotos().usuarioHaVotado(votacion.getId(), usuario.getMatricula())) {
                     JOptionPane.showMessageDialog(this, "Ya has votado en esta votación.");
@@ -60,16 +95,18 @@ public class VotarFrame extends JFrame {
                     confirmarVoto(votacion, opcion);
                 }
             });
-            panelDetalle.add(opcionButton);
+            panelDetalle.add(opcionButton, gbc);
         });
 
         JButton botonVolver = new JButton("Volver");
+        botonVolver.setPreferredSize(new Dimension(200, 30));
         botonVolver.addActionListener(e -> cardLayout.show(panelDeCartas, "Listado"));
-        panelDetalle.add(botonVolver);
+        panelDetalle.add(botonVolver, gbc);
 
         panelDeCartas.add(panelDetalle, votacion.getId());
         cardLayout.show(panelDeCartas, votacion.getId());
     }
+
 
     private void confirmarVoto(Votacion votacion, String opcionSeleccionada) {
         int resultado = JOptionPane.showConfirmDialog(this,
@@ -80,7 +117,7 @@ public class VotarFrame extends JFrame {
         if (resultado == JOptionPane.YES_OPTION) {
             controladorVotaciones.getGestorVotos().registrarVoto(votacion.getId(), usuario.getMatricula(), opcionSeleccionada);
             JOptionPane.showMessageDialog(this, "Voto registrado con éxito para: " + opcionSeleccionada);
-            cardLayout.show(panelDeCartas, "Listado");
+            System.exit(0); // Termina completamente la aplicación
         }
     }
 }
