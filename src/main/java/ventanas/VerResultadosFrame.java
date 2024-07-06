@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+
 
 // Clase VerResultadosFrame que extiende de JFrame para crear una ventana de interfaz gráfica.
 public class VerResultadosFrame extends JFrame {
@@ -71,6 +73,7 @@ public class VerResultadosFrame extends JFrame {
     }
 
     // Método para mostrar los resultados de la votación seleccionada.
+// Método para mostrar los resultados de la votación seleccionada y manejar empates.
     private void mostrarResultados() {
         String itemSeleccionado = (String) comboBoxVotaciones.getSelectedItem();
         if (itemSeleccionado == null) return; // Si no se seleccionó nada, no hacer nada.
@@ -83,20 +86,29 @@ public class VerResultadosFrame extends JFrame {
             return;
         }
 
-        // Construir el texto de los resultados.
+        // Construir el texto de los resultados y determinar la opción ganadora o un empate.
         StringBuilder resultadosTexto = new StringBuilder();
         int maxVotos = 0;
-        String opcionGanadora = "";
+        List<String> opcionesGanadoras = new ArrayList<>();
+
         for (Map.Entry<String, Integer> entry : resultados.entrySet()) {
             resultadosTexto.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             if (entry.getValue() > maxVotos) {
                 maxVotos = entry.getValue();
-                opcionGanadora = entry.getKey();
+                opcionesGanadoras.clear();
+                opcionesGanadoras.add(entry.getKey());
+            } else if (entry.getValue() == maxVotos) {
+                opcionesGanadoras.add(entry.getKey());
             }
         }
 
-        // Mostrar la opción ganadora.
-        resultadosTexto.append("\nLa opción ganadora es: ").append(opcionGanadora);
+        // Mostrar la opción ganadora o indicar empate.
+        if (opcionesGanadoras.size() > 1) {
+            resultadosTexto.append("\nNo hay una opción ganadora debido a un empate.");
+        } else {
+            resultadosTexto.append("\nLa opción ganadora es: ").append(opcionesGanadoras.get(0));
+        }
+
         textAreaResultados.setText(resultadosTexto.toString());
     }
 }
