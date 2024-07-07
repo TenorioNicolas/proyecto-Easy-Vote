@@ -2,7 +2,6 @@ package ventanas;
 
 import javax.swing.*;  // Importación de componentes de Swing para la interfaz gráfica.
 import java.awt.*;     // Herramientas de AWT para gestionar componentes y eventos.
-import java.awt.event.ActionEvent;  // Importación para manejar eventos de acción como clics de botón.
 import datos.ControladorVotaciones;  // Importa la clase que controla la lógica de negocio para las votaciones.
 import dominio.Votacion;  // Importa la clase del dominio que representa una votación.
 import java.util.List;  // Utilizado para manejar listas de objetos, en este caso, listas de votaciones.
@@ -49,6 +48,12 @@ public class DeshabilitarVotacionFrame extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(5, 5, 5, 5);  // Márgenes para los componentes.
+
+        // Añade un título al panel.
+        JLabel tituloLabel = new JLabel("Listado de votaciones disponibles");
+        tituloLabel.setFont(new Font("Arial", Font.BOLD, 16));  // Establece la fuente y el tamaño del título.
+        gbc.gridwidth = GridBagConstraints.REMAINDER;  // Hace que el título abarque toda la fila.
+        panelListado.add(tituloLabel, gbc);  // Añade el título al panel.
 
         // Añade botones para cada votación disponible.
         for (Votacion votacion : votacionesDisponibles) {

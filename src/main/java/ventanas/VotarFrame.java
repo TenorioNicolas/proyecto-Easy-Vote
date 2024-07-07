@@ -2,7 +2,6 @@ package ventanas;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import datos.ControladorVotaciones;
 import dominio.Usuario;
 import dominio.Votacion;
