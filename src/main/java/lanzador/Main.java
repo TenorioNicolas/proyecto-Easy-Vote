@@ -1,14 +1,11 @@
 package lanzador;
 
-import datos.GestorUsuarios;
-import datos.ControladorVotaciones;
-import dominio.Menu;
+import ventanas.LoginFrame;
 
+// Clase Main que funciona como punto de entrada para la aplicación.
 public class Main {
     public static void main(String[] args) {
-        GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        ControladorVotaciones controladorVotaciones = new ControladorVotaciones();
-        Menu menu = new Menu(gestorUsuarios, controladorVotaciones);
-        menu.iniciarSesionYMostrarMenu();
+        // Crear y mostrar la ventana de login usando SwingUtilities para asegurar la correcta inicialización en el Event Dispatch Thread.
+        javax.swing.SwingUtilities.invokeLater(() -> new LoginFrame().setVisible(true));
     }
 }
